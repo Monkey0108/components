@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>订单确认</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link href="css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="css/common.css" />
+    <style>
+      i {
+        font-style: normal;
+        font-weight: 400;
+      }
+      .mb10 {
+        margin-bottom: 10px;
+      }
+      .text_orange {
+        color: #f40 !important;
+      }
+      .mui-bar-nav~.mui-content{
+        padding-bottom: 60px;
+      }
+      .month-box {
+        position: relative;
+        height: 40px;
+        width: 100%;
+        overflow: hidden;
+      }
+      .month-container {
+        position: relative;
+        height: 40px;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: flex;
+      }
+      .month-container .month-selected {
+        border-bottom: 3px solid #004385;
+        position: relative;
+        color: #004385;
+      }
+      .month-container .month-item {
+        min-width: 1.05rem;
+        font-size: 16px;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .month-container .month-item span {
+        line-height: 40px;
+      }
+      .g-calendar-week {
+        position: static;
+        top: 44px;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        line-height: 25px;
+        background-color: #eff0f2;
+        overflow: hidden;
+        border-width: 0;
+        border-bottom-width: 1px;
+        border-image: url(images/bg_border_dark.png) 2 stretch;
+        border-style: solid;
+      }
+      .g-calendar-week-item {
+        float: left;
+        width: 14.2%;
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+      }
+      .g-calendar-date {
+        position: relative;
+        overflow: hidden;
+        background-color: #f9f9f9;
+      }
+      .g-calendar-date-item {
+        float: left;
+        width: 14.2%;
+        height: 55px;
+        box-sizing: border-box;
+        position: relative;
+        background-color: #fff;
+        border-width: 0;
+        border-bottom-width: 1px;
+        border-image: url(images/bg_border_dark.png) 2 stretch;
+        border-style: solid;
+        text-align: center;
+      }
+      .disable {
+        color: #aaa !important;
+      }
+      .g-calendar-date-item.disable {
+        background-color: #f9f9f9;
+      }
+      .g-calendar-date-item .extra-info {
+        height: 18px;
+        line-height: 20px;
+        font-size: 11px;
+        color: #666;
+      }
+      .g-calendar-date-item .date-info {
+        line-height: 18px;
+        font-size: 17px;
+      }
+
+      .g-calendar-date-item .price-info {
+        color: #ff7d13;
+        font-size: 10px;
+      }
+      .g-calendar-date-item .price-extra-info {
+        color: #999;
+      }
+
+      .g-calendar-date-item.current {
+        background-color: #004385;
+      }
+      .g-calendar-date-item.current [class*="-info"] {
+        color: #fff;
+      }
+
+      .choose-section,.input-section {
+        border-width: 0;
+        border-top-width: 1px;
+        border-image: url(images/bg_border_dark.png) 2 stretch;
+        border-style: solid;
+        background-color: #fff;
+      }
+      .choose-property {
+        margin-left: 15px;
+      }
+      .choose-title,.input-title {
+        line-height: 50px;
+        padding: 0 15px;
+        background-color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        color: #000;
+      }
+      .choose-property .choose-title {
+        line-height: 45px;
+        padding: 0 15px 0 0;
+        background-color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        color: #000;
+      }
+      .choose-item {
+        float: left;
+        max-width: 100%;
+        min-width: 33.3%;
+        padding: 0 10px 9px 0;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      
+      .choose-item a {
+        display: block;
+        min-width: 79px;
+        padding: 5px 10px;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 4px;
+        color: #000;
+        background-color: #efeff4;
+      }
+      .choose-item.curr a {
+        background-color: #004385;
+        color: #fff;
+      }
+      .basefix:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      .choose-num-item,.input-item {
+        min-height: 54px;
+        line-height: 35px;
+        padding: 13px 15px;
+        box-sizing: border-box;
+        position: relative;
+        color: #000;
+        border-bottom: 1px solid #e5e5e5;
+      }
+      .input-item{
+        display: flex;
+
+      }
+      .input-item .label{
+        width: 60px;
+        font-size: 15px;
+        color: #333232
+      }
+      .input-item input{
+        flex: 0.8;
+        border:none;
+        margin: 0;
+        font-size: 15px;
+        color: #999;
+      }
+      .choose-num-item .with-count{
+        display: flex;
+      }
+      .choose-num-item .with-count .label{
+        width: 50px;
+      }
+      .choose-num-item .with-count .price{
+        flex: 1;
+        text-align: center;
+        font-size: 20px;
+        color: #dd0f05
+      }
+      .choose-num-item .numcontainer {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        line-height: 0;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        margin-right: 15px;
+      }
+      .fixed.payment{
+        position: fixed;
+        bottom: 0;
+        height: 50px;
+        width: 100%;
+        background: #fff;
+        z-index: 200;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+      .fixed.payment .totalAmount{
+        font-size: 14px;
+        color:#333;
+        margin-right: 23px;
+      }
+      .fixed.payment .totalAmount .price{
+        font-size: 20px;
+        color: #dd0f05;
+      }
+      .fixed.payment .mui-btn.btn-pay{
+        width: 120px;
+        text-align: center;
+        background: #004385;
+        color: #fff;
+        font-size: 16px;
+        padding: 0;
+        height: 36px;
+        line-height: 36px;
+        border-radius: 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="mui-bar mui-bar-nav">
+      <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+      <span>订单确认</span>
+    </header>
+    <div class="mui-content mui-scroll-wrapper" id="refreshContainer">
+      <div class="mui-scroll">
+        <div id="calendar" style="margin-bottom: 10px">
+          <div class="month-box">
+            <div class="month_scroll month-container">
+              <!--
+                <div class="month-item month-selected">
+                  <span>12月</span>
+                </div>
+                <div class="month-item"><span>1月</span></div>
+                <div class="month-item"><span>2月</span></div>
+                <div class="month-item"><span>3月</span></div>
+                <div class="month-item"><span>4月</span></div>
+                <div class="month-item"><span>5月</span></div>
+              -->
+            </div>
+          </div>
+          <div class="g-calendar-week js_weekend">
+            <span class="g-calendar-week-item text_orange">日</span>
+            <span class="g-calendar-week-item ">一</span>
+            <span class="g-calendar-week-item ">二</span>
+            <span class="g-calendar-week-item ">三</span>
+            <span class="g-calendar-week-item ">四</span>
+            <span class="g-calendar-week-item ">五</span>
+            <span class="g-calendar-week-item text_orange">六</span>
+          </div>
+          <div class="g-calendar-body"><div class="g-calendar-date"></div></div>
+        </div>
+        <div class="resource-box">
+          <div id="resourceCtr" class="choose-section mb10">
+            <div class="choose-property ttd-hairline-bottom">
+              <h4 class="choose-title">场次选择</h4>
+              <div class="choose-content" style="overflow:hidden">
+                <div class="choose-item curr">
+                  <a href="javascript:;">09:20</a>
+                </div>
+                <div class="choose-item"><a href="javascript:;">09:20</a></div>
+                <div class="choose-item"><a href="javascript:;">09:20</a></div>
+                <div class="choose-item curr">
+                  <a href="javascript:;">09:20</a>
+                </div>
+                <div class="choose-item"><a href="javascript:;">09:20</a></div>
+                <div class="choose-item"><a href="javascript:;">09:20</a></div>
+              </div>
+            </div>
+          </div>
+          <div id="numSelectCtr">
+            <div class="choose-section mb10">
+              <h4 class="choose-title border-item">选择份数</h4>
+              <div class="choose-num-content choose">
+                <div class="choose-num-item">
+                  <div class="vertical-item">
+                    <div class="with-count">
+                      <span class="label">VIP区</span>
+                      <span class="price">¥ <i>480</i></span>
+                    </div>
+                  </div>
+                  <div
+                    class="mui-numbox numcontainer"
+                    data-numbox-step="1"
+                    data-numbox-min="0"
+                    data-numbox-max="30"
+                  >
+                    <button
+                      class="mui-btn mui-btn-numbox-minus"
+                      type="button"
+                      disabled=""
+                    >
+                      -
+                    </button>
+                    <input class="mui-input-numbox" type="number" />
+                    <button class="mui-btn mui-btn-numbox-plus" type="button">
+                      +
+                    </button>
+                  </div>
+                </div>
+                <div class="choose-num-item">
+                  <div class="vertical-item">
+                    <div class="with-count">
+                      <span class="label">甲区</span>
+                      <span class="price">¥ <i>480</i></span>
+                    </div>
+                  </div>
+                  <div class="mui-numbox numcontainer" data-numbox-step="1" data-numbox-min="0" data-numbox-max="30">
+                    <button class="mui-btn mui-btn-numbox-minus" type="button" disabled="">
+                      -
+                    </button>
+                    <input class="mui-input-numbox" type="number" />
+                    <button class="mui-btn mui-btn-numbox-plus" type="button">
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="InputCtr">
+            <div class="input-section mb10">
+              <h4 class="input-title border-item">联系信息</h4>
+              <div class="input-content">
+                <div class="input-item">
+                  <div class="label">联系人:</div>
+                  <input type="text" name='name'>
+                </div>
+                <div class="input-item">
+                  <div class="label">手 机:</div>
+                  <input type="text" name='mobile'>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="fixed payment">
+      <div class="totalAmount">合计:<span class="price">720</span>元</div>
+      <button type="button" class="mui-btn mui-btn-primary btn-pay">去支付</button>
+    </div>
+    <script src="js/mui.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/datepicker.js"></script>
+    <script>
+      var datePicker = new DatePicker();
+      datePicker._init();
+      mui.init({
+        swipeBack: true, //启用右滑关闭功能
+        pullRefresh: {
+          container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+          down: {
+            auto: false, //可选,默认false.首次加载自动下拉刷新一次
+            callback: refreshData //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+          },
+          up: {
+            height: 50, //可选.默认50.触发上拉加载拖动距离
+            auto: true, //可选,默认false.自动上拉加载一次
+            contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+            contentnomore: "没有更多数据了", //可选，请求完毕若没有更多数据时显示的提醒内容；
+            callback: loadMoreData //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+          }
+        }
+      });
+      //刷新数据，重新调用接口
+      function refreshData() {
+        setTimeout(function() {
+          mui("#refreshContainer")
+            .pullRefresh()
+            .endPulldownToRefresh();
+          mui("#refreshContainer")
+            .pullRefresh()
+            .refresh(true);
+        }, 1000);
+      }
+      //请求下一页数据
+      function loadMoreData() {
+        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+      }
+    
+      mui('.g-calendar-date').on('tap','.g-calendar-date-item',function(){
+        if(this.classList.contains('empty_day')){
+          return;
+        }
+        if(this.classList.contains('disable')){
+          mui.toast('该日期不可预订')
+          return;
+        }
+        if(this.parentNode.querySelector('.current')){
+          this.parentNode.querySelector('.current').classList.remove('current')
+        }
+        this.classList.add('current')
+      })
+    </script>
+  </body>
+</html>
